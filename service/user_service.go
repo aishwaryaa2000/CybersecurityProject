@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"security/component/user"
 	"strings"
 )
 
@@ -45,16 +46,18 @@ func register() {
 	des, _ := reader.ReadString('\n')
 	des = strings.TrimSpace(des)
 
-	fmt.Println("Enter User Id:")
-	uid, _ := reader.ReadString('\n')
-	uid = strings.TrimSpace(uid)
+	fmt.Println("Enter User Name:")
+	uname, _ := reader.ReadString('\n')
+	uname = strings.TrimSpace(uname)
 
 	fmt.Println("Enter Password:")
 	pass, _ := reader.ReadString('\n')
 	pass = strings.TrimSpace(pass)
 
 	//Create New User
-	fmt.Println(fname, lname, uid, des, pass)
+	user.CreateUser(fname, lname, uname, pass, des)
+
+	fmt.Println(fname, lname, uname, des, pass)
 }
 
 func login() {
