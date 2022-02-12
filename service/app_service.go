@@ -27,7 +27,7 @@ func appMenu(bell, biba int, uid string) {
 		case "3":
 			readMails(uid)
 		case "4":
-			sendMails()
+			sendMails(uid)
 		case "5":
 			fmt.Println("Logging Out!!!")
 			return

@@ -89,7 +89,7 @@ func ListAllUser() {
 }
 
 func ListUserName() {
-	fmt.Println("All username")
+	fmt.Println("\nList of all username\n-------------")
 	for _, val := range UserList {
 		fmt.Println(val.username)
 	}

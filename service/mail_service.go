@@ -18,7 +18,7 @@ import (
 var secret = "key"
 
 func readMails(username string) {
-	fmt.Println("---INBOX----")
+	fmt.Println("-----INBOX-----")
 	user.GetMailFiles(username)
 
 	reader := bufio.NewReader(os.Stdin)
@@ -26,13 +26,13 @@ func readMails(username string) {
 	name, _ := reader.ReadString('\n')
 	name = strings.TrimSpace(name)
 	name = "mailFiles/" + name
+
 	file, err := os.Open(name)
 	if err != nil {
 		log.Fatalf("Failed to open")
 
 	}
 	defer file.Close()
-	// name = "mailFiles/" + name
 	hmacWithMail, _ := ioutil.ReadFile(name) //entire data in byte format
 
 	privateKey, _, _ := user.GetPublicPrivateKey(username)
@@ -64,11 +64,11 @@ func checkHmacSame(hmacWithMail string) (bool, string) {
 
 }
 
-func sendMails() {
+func sendMails(username string) {
 
 	reader := bufio.NewReader(os.Stdin)
 	user.ListUserName()
-begin:
+    begin:
 	fmt.Println("To which user do you wish to send the mail?")
 	uid, _ := reader.ReadString('\n')
 	uid = strings.TrimSpace(uid)
@@ -86,6 +86,7 @@ begin:
 	fmt.Println("Enter the data of your mail")
 	data, _ := reader.ReadString('\n')
 	data = strings.TrimSpace(data)
+	data = "Sender of this mail is : "+username+ "\n" + data
 
 	h := hmac.New(sha256.New, []byte(secret))
 	mailEncrypted := encrypt.EncryptMail(publicKey, data)
@@ -118,10 +119,6 @@ func sendToReciever(subject, hmacWithMail, uid string) {
 
 	//Get the MailFiles slice of the reciever so that we can append the filename
 	user.AppendFiles(uid, fileName)
-
-	// toMailFiles := user.GetMailFiles(uid)
-	// toMailFiles = append(toMailFiles, &fileName)
-	// files := temp.MailFiles(toMailFiles)
 
 	fmt.Println("Mail has been sent to ", uid)
 
