@@ -9,19 +9,20 @@ import (
 	"crypto/rsa"
 	"crypto/sha512"
 	"encoding/hex"
+	// "fmt"
 	"io"
 )
 
 //const secretkey string=""
 
-func EncryptMail(publicKey rsa.PublicKey, msg string) []byte {
-	cipher, _ := rsa.EncryptOAEP(sha512.New(), rand.Reader, &publicKey, []byte(msg), nil)
-	return cipher
+func EncryptMail(publicKey *rsa.PublicKey, msg string) string {
+	cipher, _ := rsa.EncryptOAEP(sha512.New(), rand.Reader, publicKey, []byte(msg), nil)
+	return string(cipher)
 }
 
-func DecryptMail(privateKey *rsa.PrivateKey, cipher []byte) []byte {
-	plainText, _ := privateKey.Decrypt(nil, cipher, &rsa.OAEPOptions{Hash: crypto.SHA512})
-	return plainText
+func DecryptMail(privateKey *rsa.PrivateKey, cipher string) string {
+	plainText, _ := privateKey.Decrypt(nil, []byte(cipher), &rsa.OAEPOptions{Hash: crypto.SHA512})
+	return string(plainText)
 }
 
 func CreateHash(pwd string) string {

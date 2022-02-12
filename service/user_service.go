@@ -72,7 +72,7 @@ func login() {
 	//Authenticate User then call
 	check, bell, biba := user.CheckUser(uid, pass)
 	if check {
-		AppService(bell, biba)
+		AppService(bell, biba,uid)
 	}
 	fmt.Println("Wrong Credentials")
 }

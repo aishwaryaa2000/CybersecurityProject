@@ -4,6 +4,7 @@ import (
 	"bufio"
 	"crypto/rand"
 	"crypto/rsa"
+	"errors"
 	"fmt"
 	"io"
 	"log"
@@ -22,7 +23,7 @@ type User struct {
 	bibaLevel  int
 	privateKey *rsa.PrivateKey
 	publicKey  rsa.PublicKey
-	mailFiles  []string
+	mailFiles  []*string
 }
 
 var UserList []*User
@@ -59,7 +60,7 @@ func CreateUser(name, username, password, role string) {
 	fmt.Println("User successfull added")
 }
 
-func NewUser(name, userName, password, role string, bellLevel, bibaLevel int, privateKey *rsa.PrivateKey, publicKey rsa.PublicKey, files []string) *User {
+func NewUser(name, userName, password, role string, bellLevel, bibaLevel int, privateKey *rsa.PrivateKey, publicKey rsa.PublicKey, files []*string) *User {
 	var user = &User{
 		name:       name,
 		username:   userName,
@@ -80,8 +81,37 @@ func ListAllUser() {
 		fmt.Print(" Userid:", val.username)
 		fmt.Print(" Password:", val.password)
 		fmt.Print(" Designation:", val.role)
-		fmt.Println()
+		// fmt.Println("Public Key : ",val.publicKey)
+		// fmt.Println("Private Key : ",val.privateKey)
+
 	}
+}
+
+func ListUserName(){
+	fmt.Println("All username")
+	for _, val := range UserList {
+		fmt.Println(val.username)
+
+	}
+}
+
+func GetMailFiles(username string) []*string{
+	for _, val := range UserList {
+		if(username==val.username){
+			return val.mailFiles
+		}
+	}
+	return nil	
+}
+
+func GetPublicPrivateKey(username string) (*rsa.PrivateKey,*rsa.PublicKey,error){
+	for _, val := range UserList {
+		if(username==val.username){
+			return val.privateKey,&val.publicKey,nil
+		}
+	}
+	err:= errors.New("Username not found")
+	return nil,nil,err	
 }
 
 func ReadData() {
@@ -127,7 +157,7 @@ func WriteData() {
 	for _, val := range UserList {
 		data = val.name + "," + "," + val.username + "," + val.password + "," + val.role + "," + fmt.Sprintf("%d", (int(val.bellLevel))) + "," + fmt.Sprintf("%d", (int(val.bibaLevel))) + "," //Write Public & Private RSA Key
 		for _, val1 := range val.mailFiles {
-			data += val1 + ","
+			data += *val1 + ","
 		}
 		f.WriteString(data + "\n")
 	}
@@ -148,3 +178,4 @@ func CheckUser(userid, pass string) (bool, int, int) {
 // func ReadMail() {
 
 // }
+
