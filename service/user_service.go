@@ -14,7 +14,7 @@ func UserService() {
 
 func userMenu() {
 	for {
-		fmt.Println("-------MENU-------", "\nEnter 1 to Register", "\nEnter 2 to Login", "\nEnter 3 to Logout")
+		fmt.Println("-------MENU-------", "\nEnter 1 to Register", "\nEnter 2 to Login", "\nEnter 3 to list all Users", "\nEnter 4 to Logout")
 		reader := bufio.NewReader(os.Stdin)
 		ch, _ := reader.ReadString('\n')
 		ch = strings.TrimSpace(ch)
@@ -24,6 +24,9 @@ func userMenu() {
 		case "2":
 			login()
 		case "3":
+			user.ListAllUser()
+		case "4":
+			user.WriteData()
 			fmt.Println("Exiting!!!")
 			return
 		default:
@@ -34,13 +37,9 @@ func userMenu() {
 
 func register() {
 	reader := bufio.NewReader(os.Stdin)
-	fmt.Println("Enter First Name:")
-	fname, _ := reader.ReadString('\n')
-	fname = strings.TrimSpace(fname)
-
-	fmt.Println("Enter Last Name:")
-	lname, _ := reader.ReadString('\n')
-	lname = strings.TrimSpace(lname)
+	fmt.Println("Enter Name:")
+	name, _ := reader.ReadString('\n')
+	name = strings.TrimSpace(name)
 
 	fmt.Println("Enter Designation Name:")
 	des, _ := reader.ReadString('\n')
@@ -55,9 +54,9 @@ func register() {
 	pass = strings.TrimSpace(pass)
 
 	//Create New User
-	user.CreateUser(fname, lname, uname, pass, des)
+	user.CreateUser(name, uname, pass, des)
 
-	fmt.Println(fname, lname, uname, des, pass)
+	fmt.Println(name, uname, des, pass)
 }
 
 func login() {
@@ -71,5 +70,9 @@ func login() {
 	pass = strings.TrimSpace(pass)
 
 	//Authenticate User then call
-	AppService()
+	check, bell, biba := user.CheckUser(uid, pass)
+	if check {
+		AppService(bell, biba)
+	}
+	fmt.Println("Wrong Credentials")
 }
