@@ -13,6 +13,7 @@ func UserService() {
 }
 
 func userMenu() {
+	user.ReadData()
 	for {
 		fmt.Println("-------MENU-------", "\nEnter 1 to Register", "\nEnter 2 to Login", "\nEnter 3 to list all Users", "\nEnter 4 to Logout")
 		reader := bufio.NewReader(os.Stdin)
@@ -56,7 +57,6 @@ func register() {
 	//Create New User
 	user.CreateUser(name, uname, pass, des)
 
-	fmt.Println(name, uname, des, pass)
 }
 
 func login() {
@@ -72,7 +72,7 @@ func login() {
 	//Authenticate User then call
 	check, bell, biba := user.CheckUser(uid, pass)
 	if check {
-		AppService(bell, biba,uid)
+		AppService(bell, biba, uid)
 	}
 	fmt.Println("Wrong Credentials")
 }
