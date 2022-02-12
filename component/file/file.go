@@ -88,6 +88,8 @@ func readFile(name string) {
 		if len(val) > 0 {
 			plainText := string(encrypt.DecryptFile([]byte(strings.TrimSpace(val))))
 			fmt.Println(plainText)
+		} else {
+			fmt.Println("Please Note: File is empty")
 		}
 	}
 }
@@ -108,5 +110,5 @@ func WriteFile(name string, phrase string) error {
 			return nil
 		}
 	}
-	return errors.New("file not in the given list")
+	return errors.New("File not in the given list")
 }

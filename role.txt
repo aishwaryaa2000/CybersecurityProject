@@ -1,0 +1,6 @@
+hr,3,2
+sales,2,2
+dev,2,2
+intern,1,1
+operations,2,1
+finance,3,3

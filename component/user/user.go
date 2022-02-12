@@ -11,6 +11,7 @@ import (
 	"log"
 	"os"
 	"security/component/encrypt"
+	"security/component/role"
 	"strconv"
 	"strings"
 )
@@ -29,37 +30,19 @@ type User struct {
 
 var UserList []*User
 
-func CreateUser(name, username, password, role string) {
+func CreateUser(name, username, password, des string) {
 	var bell, biba int
 	privateKey, _ := rsa.GenerateKey(rand.Reader, 2048)
 	publicKey := &privateKey.PublicKey
 	saltHash := encrypt.CreateHash(name)
 	newPassword := password + saltHash
 	hashPassword := encrypt.CreateHash(newPassword)
-	switch role {
-	case "hr":
-		bell = 3
-		biba = 2
-	case "sales":
-		bell = 2
-		biba = 2
-	case "dev":
-		bell = 2
-		biba = 3
-	case "intern":
-		bell = 1
-		biba = 1
-	case "head":
-		bell = 3
-		biba = 3
-	default:
-		bell = 1
-		biba = 1
-	}
-	newUser := NewUser(name, username, hashPassword, role, bell, biba, privateKey, publicKey, nil)
+	bell, biba = role.AssignLevels(des)
+
+	newUser := NewUser(name, username, hashPassword, des, bell, biba, privateKey, publicKey, nil)
 	UserList = append(UserList, newUser)
 	fmt.Println("User successfull added")
-	fmt.Println(name, username, role, hashPassword)
+	fmt.Println(name, username, des, hashPassword)
 }
 
 func NewUser(name, userName, password, role string, bellLevel, bibaLevel int, privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, files []string) *User {
@@ -95,15 +78,16 @@ func ListUserName() {
 	}
 }
 
-func GetMailFiles(username string) {
+func GetMailFiles(username string) []string {
 	for _, val := range UserList {
 		if username == val.username {
 			for _, val1 := range val.mailFiles {
 				fmt.Println(val1)
 			}
-			return
+			return val.mailFiles
 		}
 	}
+	return nil
 }
 
 func GetPublicPrivateKey(username string) (*rsa.PrivateKey, *rsa.PublicKey, error) {

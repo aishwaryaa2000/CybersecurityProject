@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"security/component/file"
+	"security/component/filelog"
 	"strings"
 )
 
@@ -21,9 +22,9 @@ func appMenu(bell, biba int, uid string) {
 		ch = strings.TrimSpace(ch)
 		switch ch {
 		case "1":
-			readFile(bell, biba)
+			readFile(bell, biba, uid)
 		case "2":
-			writeFile(bell, biba)
+			writeFile(bell, biba, uid)
 		case "3":
 			readMails(uid)
 		case "4":
@@ -37,7 +38,7 @@ func appMenu(bell, biba int, uid string) {
 	}
 }
 
-func readFile(bell, biba int) {
+func readFile(bell, biba int, uid string) {
 	//show all file slice
 	fmt.Println("The ReadAble files are")
 	cnt := file.ReadAble(bell, biba)
@@ -55,9 +56,10 @@ func readFile(bell, biba int) {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
+	filelog.WriteFileLog(uid, name, "reads")
 }
 
-func writeFile(bell, biba int) {
+func writeFile(bell, biba int, uid string) {
 	fmt.Println("The Write able files are")
 	//get count of all right able files
 	cnt := file.WriteAble(bell, biba)
@@ -77,4 +79,5 @@ func writeFile(bell, biba int) {
 	if err != nil {
 		fmt.Println("Error:", err)
 	}
+	filelog.WriteFileLog(uid, name, "writes")
 }

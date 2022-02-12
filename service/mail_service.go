@@ -19,7 +19,11 @@ var secret = "key"
 
 func readMails(username string) {
 	fmt.Println("-----INBOX-----")
-	user.GetMailFiles(username)
+	allMails := user.GetMailFiles(username)
+	if allMails == nil {
+		fmt.Println("No Mails present in Inbox")
+		return
+	}
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Enter any listed files name with extension which you wish to read:")
@@ -68,7 +72,7 @@ func sendMails(username string) {
 
 	reader := bufio.NewReader(os.Stdin)
 	user.ListUserName()
-    begin:
+begin:
 	fmt.Println("To which user do you wish to send the mail?")
 	uid, _ := reader.ReadString('\n')
 	uid = strings.TrimSpace(uid)
@@ -86,7 +90,7 @@ func sendMails(username string) {
 	fmt.Println("Enter the data of your mail")
 	data, _ := reader.ReadString('\n')
 	data = strings.TrimSpace(data)
-	data = "Sender of this mail is : "+username+ "\n" + data
+	data = "Sender of this mail is : " + username + "\n" + data
 
 	h := hmac.New(sha256.New, []byte(secret))
 	mailEncrypted := encrypt.EncryptMail(publicKey, data)
