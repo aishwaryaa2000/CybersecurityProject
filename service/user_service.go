@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"os"
 	"security/component/user"
+	"security/component/filelog"
 	"strings"
 )
 
@@ -72,7 +73,9 @@ func login() {
 	//Authenticate User then call
 	check, bell, biba := user.CheckUser(uid, pass)
 	if check {
+		filelog.WriteUserLog(uid," logged in")
 		AppService(bell, biba, uid)
+		filelog.WriteUserLog(uid," logged out")
 		return
 	}
 	fmt.Println("Wrong Credentials")
