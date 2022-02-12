@@ -18,11 +18,8 @@ import (
 var secret = "key"
 
 func readMails(username string) {
-	inbox := user.GetMailFiles(username)
 	fmt.Println("---INBOX----")
-	for _, iMail := range inbox {
-		fmt.Println(*iMail)
-	}
+	user.GetMailFiles(username)
 
 	reader := bufio.NewReader(os.Stdin)
 	fmt.Println("Enter any listed files name with extension which you wish to read:")
@@ -30,19 +27,19 @@ func readMails(username string) {
 	name = strings.TrimSpace(name)
 	name = "mailFiles/" + name
 	file, err := os.Open(name)
-	defer file.Close()
 	if err != nil {
 		log.Fatalf("Failed to open")
 
 	}
+	defer file.Close()
 	// name = "mailFiles/" + name
-	hmacWithMail, err := ioutil.ReadFile(name) //entire data in byte format
+	hmacWithMail, _ := ioutil.ReadFile(name) //entire data in byte format
 
-	privateKey, _, err := user.GetPublicPrivateKey(username)
+	privateKey, _, _ := user.GetPublicPrivateKey(username)
 
 	ok, mailEncrypted := checkHmacSame(string(hmacWithMail))
 
-	if ok == true {
+	if ok {
 		fmt.Println("Hmac recieved and sent is same")
 		plainText := encrypt.DecryptMail(privateKey, mailEncrypted)
 		fmt.Println(plainText)
@@ -103,10 +100,11 @@ begin:
 
 func sendToReciever(subject, hmacWithMail, uid string) {
 
-	fileName := "mailFiles/" + subject + ".txt"
-
-	f, err := os.Create(fileName)
-	f, err = os.OpenFile(fileName, os.O_APPEND|os.O_WRONLY, 0644)
+	fileName := subject + ".txt"
+	var err error
+	f, _ := os.Create("mailFiles/" + fileName)
+	f.Close()
+	f, err = os.OpenFile("mailFiles/"+fileName, os.O_APPEND|os.O_WRONLY, 0644)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -119,8 +117,7 @@ func sendToReciever(subject, hmacWithMail, uid string) {
 	}
 
 	//Get the MailFiles slice of the reciever so that we can append the filename
-	var temp user.User
-	temp.AppendFiles(fileName)
+	user.AppendFiles(uid, fileName)
 
 	// toMailFiles := user.GetMailFiles(uid)
 	// toMailFiles = append(toMailFiles, &fileName)

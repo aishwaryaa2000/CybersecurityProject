@@ -8,11 +8,11 @@ import (
 	"strings"
 )
 
-func AppService(bell, biba int,uid string) {
-	appMenu(bell, biba,uid)
+func AppService(bell, biba int, uid string) {
+	appMenu(bell, biba, uid)
 }
 
-func appMenu(bell, biba int,uid string) {
+func appMenu(bell, biba int, uid string) {
 	file.Read()
 	for {
 		fmt.Println("-------MENU-------", "\nEnter 1 to Read File", "\nEnter 2 to Write File", "\nEnter 3 to Read Mails", "\nEnter 4 to Send Mails", "\nEnter 5 to Exit")

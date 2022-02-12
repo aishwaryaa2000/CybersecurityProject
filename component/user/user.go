@@ -24,7 +24,7 @@ type User struct {
 	bibaLevel  int
 	privateKey *rsa.PrivateKey
 	publicKey  *rsa.PublicKey
-	mailFiles  []*string
+	mailFiles  []string
 }
 
 var UserList []*User
@@ -62,7 +62,7 @@ func CreateUser(name, username, password, role string) {
 	fmt.Println(name, username, role, hashPassword)
 }
 
-func NewUser(name, userName, password, role string, bellLevel, bibaLevel int, privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, files []*string) *User {
+func NewUser(name, userName, password, role string, bellLevel, bibaLevel int, privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, files []string) *User {
 	var user = &User{
 		name:       name,
 		username:   userName,
@@ -83,8 +83,6 @@ func ListAllUser() {
 		fmt.Print(" Userid:", val.username)
 		fmt.Print(" Password:", val.password)
 		fmt.Println(" Designation:", val.role)
-		fmt.Println("Public Key : ", val.publicKey)
-		// fmt.Println("Private Key : ",val.privateKey)
 		fmt.Println()
 
 	}
@@ -94,17 +92,18 @@ func ListUserName() {
 	fmt.Println("All username")
 	for _, val := range UserList {
 		fmt.Println(val.username)
-
 	}
 }
 
-func GetMailFiles(username string) []*string {
+func GetMailFiles(username string) {
 	for _, val := range UserList {
 		if username == val.username {
-			return val.mailFiles
+			for _, val1 := range val.mailFiles {
+				fmt.Println(val1)
+			}
+			return
 		}
 	}
-	return nil
 }
 
 func GetPublicPrivateKey(username string) (*rsa.PrivateKey, *rsa.PublicKey, error) {
@@ -113,7 +112,7 @@ func GetPublicPrivateKey(username string) (*rsa.PrivateKey, *rsa.PublicKey, erro
 			return val.privateKey, val.publicKey, nil
 		}
 	}
-	err := errors.New("Username not found")
+	err := errors.New("username not found")
 	return nil, nil, err
 }
 
@@ -128,14 +127,6 @@ func ReadData() {
 		log.Fatal(err)
 	}
 	defer f.Close()
-	// reader := bufio.NewReader(f)
-	// for {
-	// 	data, err := reader.ReadString('\n')
-	// 	if err == io.EOF {
-	// 		break
-	// 	}
-	// 	storeData(strings.TrimSpace(data))
-	// }
 	data, err := ioutil.ReadFile("users.txt")
 	if err != nil {
 		fmt.Println("File reading error", err)
@@ -145,7 +136,6 @@ func ReadData() {
 }
 
 func storeData(data string) {
-	//dataSlice := make([]string, 0)
 	data1 := strings.Split(data, "fmt")
 	for _, records := range data1 {
 		records = strings.TrimSpace(records)
@@ -167,12 +157,11 @@ func storeData(data string) {
 
 		} else {
 			//var fileName string
-			for _, fileName := range dataSlice[8] {
-				files := strconv.QuoteRune(fileName)
-				tempUser.mailFiles = append(tempUser.mailFiles, &files)
+			for i := 8; i < len(dataSlice); i++ {
+				files := dataSlice[i]
+				tempUser.mailFiles = append(tempUser.mailFiles, files)
 			}
 		}
-
 		UserList = append(UserList, &tempUser)
 		//fmt.Println(UserList)
 	}
@@ -189,7 +178,7 @@ func WriteData() {
 		pubKey, _ := ExportRsaPublicKeyAsPemStr(val.publicKey)
 		data = val.name + "line" + val.username + "line" + val.password + "line" + val.role + "line" + fmt.Sprintf("%d", (int(val.bellLevel))) + "line" + fmt.Sprintf("%d", (int(val.bibaLevel))) + "line" + string(privKey) + "line" + string(pubKey) + "line" //Write Public & Private RSA Key
 		for _, val1 := range val.mailFiles {
-			data += *val1 + "line"
+			data += val1 + "line"
 		}
 		f.WriteString(data + "fmt\n")
 	}
@@ -263,19 +252,14 @@ func ParseRsaPublicKeyFromPemStr(pubPEM string) (*rsa.PublicKey, error) {
 	default:
 		break // fall through
 	}
-	return nil, errors.New("Key type is not RSA")
+	return nil, errors.New("key type is not rsa")
 }
 
-func (u *User) AppendFiles(fileName string) {
-	u.mailFiles = append(u.mailFiles, &fileName)
-	for _, singleFile := range u.mailFiles {
-		fmt.Println(*singleFile)
-
+func AppendFiles(uid, fileName string) {
+	for _, val := range UserList {
+		if val.username == uid {
+			val.mailFiles = append(val.mailFiles, fileName)
+		}
 	}
 
 }
-
-//Display All Mails received to user.
-// func ReadMail() {
-
-// }
