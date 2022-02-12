@@ -57,6 +57,8 @@ func register() {
 
 	//Create New User
 	user.CreateUser(name, uname, pass, des)
+	filelog.WriteUserLog(uname," signed in")
+
 
 }
 
