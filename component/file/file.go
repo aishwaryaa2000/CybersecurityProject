@@ -84,14 +84,16 @@ func ReadFile(name string) error {
 
 func readFile(name string) {
 	data, _ := ioutil.ReadFile("files/" + name)
-	for _, val := range strings.Split(string(data), "line") {
-		if len(val) > 0 {
-			plainText := string(encrypt.DecryptFile([]byte(strings.TrimSpace(val))))
-			fmt.Println(plainText)
-		} else {
-			fmt.Println("Please Note: File is empty")
+	if len(data) > 0 {
+		for _, val := range strings.Split(string(data), "line") {
+			if len(val) > 0 {
+				plainText := string(encrypt.DecryptFile([]byte(strings.TrimSpace(val))))
+				fmt.Println(plainText)
+			}
 		}
+		return
 	}
+	fmt.Println("Please Note: File is empty")
 }
 
 func WriteFile(name string, phrase string) error {

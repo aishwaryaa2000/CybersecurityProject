@@ -42,7 +42,6 @@ func CreateUser(name, username, password, des string) {
 	newUser := NewUser(name, username, hashPassword, des, bell, biba, privateKey, publicKey, nil)
 	UserList = append(UserList, newUser)
 	fmt.Println("User successfull added")
-	fmt.Println(name, username, des, hashPassword)
 }
 
 func NewUser(name, userName, password, role string, bellLevel, bibaLevel int, privateKey *rsa.PrivateKey, publicKey *rsa.PublicKey, files []string) *User {
@@ -81,9 +80,6 @@ func ListUserName() {
 func GetMailFiles(username string) []string {
 	for _, val := range UserList {
 		if username == val.username {
-			for _, val1 := range val.mailFiles {
-				fmt.Println(val1)
-			}
 			return val.mailFiles
 		}
 	}
@@ -141,7 +137,7 @@ func storeData(data string) {
 
 		} else {
 			//var fileName string
-			for i := 8; i < len(dataSlice); i++ {
+			for i := 8; i < len(dataSlice)-1; i++ {
 				files := dataSlice[i]
 				tempUser.mailFiles = append(tempUser.mailFiles, files)
 			}
@@ -150,6 +146,7 @@ func storeData(data string) {
 		//fmt.Println(UserList)
 	}
 }
+
 func WriteData() {
 	f, err := os.OpenFile("users.txt", os.O_RDWR, 0644)
 	if err != nil {

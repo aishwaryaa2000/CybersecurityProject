@@ -20,7 +20,11 @@ var secret = "key"
 func readMails(username string) {
 	fmt.Println("-----INBOX-----")
 	allMails := user.GetMailFiles(username)
-	if allMails == nil {
+	if allMails != nil {
+		for _, val1 := range allMails {
+			fmt.Println(val1)
+		}
+	} else {
 		fmt.Println("No Mails present in Inbox")
 		return
 	}
