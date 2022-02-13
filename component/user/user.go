@@ -70,10 +70,12 @@ func ListAllUser() {
 	}
 }
 
-func ListUserName() {
+func ListUserName(username string) {
 	fmt.Println("\nList of all username\n-------------")
 	for _, val := range UserList {
+		if val.username!=username{
 		fmt.Println(val.username)
+		}
 	}
 }
 

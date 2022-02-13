@@ -12,7 +12,6 @@ import (
 	"security/component/encrypt"
 	"security/component/user"
 	"strings"
-	// "security/component/encrypt"
 )
 
 var secret = "key"
@@ -34,7 +33,11 @@ func readMails(username string) {
 	name, _ := reader.ReadString('\n')
 	name = strings.TrimSpace(name)
 	name = "mailFiles/" + name
+	readByRsaHmac(name,username)
+}
 
+
+func readByRsaHmac(name,username string){
 	file, err := os.Open(name)
 	if err != nil {
 		log.Fatalf("Failed to open")
@@ -75,7 +78,7 @@ func checkHmacSame(hmacWithMail string) (bool, string) {
 func sendMails(username string) {
 
 	reader := bufio.NewReader(os.Stdin)
-	user.ListUserName()
+	user.ListUserName(username)
 begin:
 	fmt.Println("To which user do you wish to send the mail?")
 	uid, _ := reader.ReadString('\n')
@@ -102,7 +105,7 @@ begin:
 	hmacCode := hex.EncodeToString(h.Sum(nil)) //hmac code by using key and encrypted mail
 	hmacWithMail := hmacCode + mailEncrypted   //appending hmacCode with mail
 
-	//Now,this hmacWithMail is recieved by the reciever
+	//Now,this hmacWithMail is recieved by the reciever and appended to reciever's inbox mailSlice and a new file is created
 	sendToReciever(subject, hmacWithMail, uid)
 
 }
